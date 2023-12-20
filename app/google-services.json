@@ -1,13 +1,33 @@
 {
   "project_info": {
-    "project_number": "271941380756",
-    "project_id": "instagram-copy-26854",
-    "storage_bucket": "instagram-copy-26854.appspot.com"
+    "project_number": "695320077159",
+    "firebase_url": "https://instagramcopy-ac29a-default-rtdb.firebaseio.com",
+    "project_id": "instagramcopy-ac29a",
+    "storage_bucket": "instagramcopy-ac29a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:271941380756:android:5feedcda08dbfbbc466281",
+        "mobilesdk_app_id": "1:695320077159:android:2a5ab6de94625ca1c405c2",
+        "android_client_info": {
+          "package_name": "com.example.instagramCopy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtsMB5IMOT4SKwTlWeCCAufoZlklzrsTs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:695320077159:android:343a6a67314a10d3c405c2",
         "android_client_info": {
           "package_name": "com.example.instagram_copy"
         }
@@ -15,7 +35,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB8_h57QZkqMfvdiN7wcVhkOElT8up1o7s"
+          "current_key": "AIzaSyAtsMB5IMOT4SKwTlWeCCAufoZlklzrsTs"
         }
       ],
       "services": {
