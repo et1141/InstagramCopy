@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "271941380756",
+    "project_id": "instagram-copy-26854",
+    "storage_bucket": "instagram-copy-26854.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:271941380756:android:5feedcda08dbfbbc466281",
+        "android_client_info": {
+          "package_name": "com.example.instagram_copy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8_h57QZkqMfvdiN7wcVhkOElT8up1o7s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
