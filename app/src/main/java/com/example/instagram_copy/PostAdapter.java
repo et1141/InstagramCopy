@@ -1,15 +1,22 @@
 package com.example.instagram_copy;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class PostAdapter extends ArrayAdapter<Post> {
@@ -36,11 +43,40 @@ public class PostAdapter extends ArrayAdapter<Post> {
         TextView usernameTextView = listItemView.findViewById(R.id.post_username);
         TextView descriptionTextView = listItemView.findViewById(R.id.post_description);
         TextView dateTextView = listItemView.findViewById(R.id.post_date);
+        ImageView post_image = listItemView.findViewById(R.id.post_image);
 
         usernameTextView.setText(currentPost.getUsername());
         descriptionTextView.setText(currentPost.getDescription());
         dateTextView.setText(currentPost.getDate());
+        new DownloadImageFromInternet((ImageView) post_image).execute(currentPost.getImageUrl());
+
 
         return listItemView;
     }
+
+
+//code source:https://www.tutorialspoint.com/how-do-i-load-an-imageview-by-url-on-android
+private class DownloadImageFromInternet extends AsyncTask<String, Void, Bitmap> {
+    ImageView imageView;
+    public DownloadImageFromInternet(ImageView imageView) {
+        this.imageView=imageView;
+        Toast.makeText(context.getApplicationContext(), "Please wait, it may take a few minute...",Toast.LENGTH_SHORT).show();
+    }
+    protected Bitmap doInBackground(String... urls) {
+        String imageURL=urls[0];
+        Bitmap bimage=null;
+        try {
+            InputStream in=new java.net.URL(imageURL).openStream();
+            bimage= BitmapFactory.decodeStream(in);
+        } catch (Exception e) {
+            Log.e("Error Message", e.getMessage());
+            e.printStackTrace();
+        }
+        return bimage;
+    }
+    protected void onPostExecute(Bitmap result) {
+        imageView.setImageBitmap(result);
+    }
 }
+}
+

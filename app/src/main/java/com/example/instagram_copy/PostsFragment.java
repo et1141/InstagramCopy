@@ -38,9 +38,13 @@
             postsListView = view.findViewById(R.id.listViewPosts);
 
             ArrayList<Post> posts = new ArrayList<Post>(); //TODO make downloadPosts() work
+            posts = downloadPosts(postsReference);
+            //if you want posts of specific user:
+
+            //example posts
             String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-            posts.add(new Post("et11", "ASFFAS", "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=600", currentDate));
-            posts.add(new Post("et11", "fff", "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=600", currentDate));
+            posts.add(new Post("et11", "My amazing dogs:)", "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=600", currentDate));
+            posts.add(new Post("et11", "elon musk", "https://media.cnn.com/api/v1/images/stellar/prod/2023-11-30t135953z-879534570-rc2on4amk5bn-rtrmadp-3-twitter-musk.jpg?c=16x9&q=h_833,w_1480,c_fill", currentDate));
 
             PostAdapter adapter = new PostAdapter(requireContext(), posts);
             // Ustaw adapter dla ListView
@@ -49,9 +53,27 @@
 
             return view;
         }
-        public ArrayList<Post> downloadPosts() {
+        public ArrayList<Post> downloadPosts(DatabaseReference posts_ref) {
             ArrayList<Post> posts = new ArrayList<>();
-
+            posts_ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                        Post post = postSnapshot.getValue(Post.class);
+                        if (post != null) {
+                            posts.add(post);
+                        }
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("Firebase", "Failed to read value.", error.toException());
+                }
+            });
+            return posts;
+        }
+        public ArrayList<Post> downloadPosts_user(String username) {
+            ArrayList<Post> posts = new ArrayList<>();
             postsReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -67,9 +89,12 @@
                     Log.e("Firebase", "Failed to read value.", error.toException());
                 }
             });
-
             return posts;
         }
+
+
+
+    //not working:(
     private void displayPosts() {
         FirebaseListOptions<Post> options = new FirebaseListOptions.Builder<Post>()
                 .setLayout(R.layout.post_item)
@@ -91,8 +116,9 @@
 
         postsListView.setAdapter(adapter);
     }
-    private void displayRandom(){
 
+    //old function showing how adapter works
+    private void displayRandom(){
         //displayPosts();
         String[] posts = {
                 "Post 1: User1 - Time1 - Description1",
