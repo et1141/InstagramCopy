@@ -40,6 +40,8 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.firebase:firebase-database:20.3.0")
     implementation("com.google.firebase:firebase-crashlytics:18.6.0")
+    implementation ("com.firebaseui:firebase-ui-database:7.1.1")
+    implementation ("com.squareup.picasso:picasso:2.71828")
     implementation("com.google.firebase:firebase-analytics:21.5.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

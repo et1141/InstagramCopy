@@ -2,7 +2,6 @@ package com.example.instagram_copy;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +9,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.database.DatabaseReference;
@@ -23,12 +21,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class AddPost extends Fragment {
+public class AddPostFragment extends Fragment {
 
     private EditText descriptionEditText;
     private Button postButton;
     private DatabaseReference postsReference;
-    
+
+    private ImageButton imageButtonAddPhoto;
+    private ImageView imageViewSelectedPhoto;
+
     private SharedPreferences sp;
 
     @Override
@@ -38,6 +39,9 @@ public class AddPost extends Fragment {
 
         descriptionEditText = view.findViewById(R.id.editTextDescription);
         postButton = view.findViewById(R.id.buttonPost);
+        imageButtonAddPhoto = view.findViewById(R.id.imageButtonAddPhoto);
+        imageViewSelectedPhoto = view.findViewById(R.id.imageViewSelectedPhoto);
+
 
         sp = requireActivity().getSharedPreferences("login", requireActivity().MODE_PRIVATE);
         postsReference = FirebaseDatabase.getInstance().getReference("posts");
@@ -48,7 +52,12 @@ public class AddPost extends Fragment {
                 addPost();
             }
         });
-
+        imageButtonAddPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+             //TODO   choosePhoto();
+            }
+        });
         return view;
     }
 
@@ -65,8 +74,7 @@ public class AddPost extends Fragment {
 
         // Get current date
         String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-
-        final Post post = new Post(sp.getString("username", ""), description, null, currentDate);
+        final Post post = new Post(sp.getString("username", ""), description, "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=600", currentDate);
 
         // Add post to the database
         postsReference.child(postId).setValue(post);
@@ -77,4 +85,6 @@ public class AddPost extends Fragment {
         startActivity(intent);
         requireActivity().finish();
     }
+
+
 }
