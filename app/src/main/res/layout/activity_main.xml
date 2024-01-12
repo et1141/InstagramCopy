@@ -7,6 +7,7 @@
     android:background="@android:color/white">
 
     <!-- Toolbar -->
+
     <LinearLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -21,51 +22,53 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:hint="Search"
             android:background="@color/colorAccentLight"
+            android:hint="Search"
             android:padding="8dp"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/black" />
 
         <!-- Add Post Button -->
         <ImageButton
             android:id="@+id/buttonHome"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/home_icon"
             android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="Back home"/>
+            android:contentDescription="Back home"
+            android:src="@drawable/home_icon" />
+
         <ImageButton
             android:id="@+id/buttonAddPost"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/add_icon"
             android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="Add Post"/>
+            android:contentDescription="Add Post"
+            android:src="@drawable/add_icon" />
 
         <!-- Profile Button -->
         <ImageButton
             android:id="@+id/buttonProfile"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/profile_icon"
             android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="Profile"/>
+            android:contentDescription="Profile"
+            android:src="@drawable/profile_icon" />
+
         <ImageButton
             android:id="@+id/buttonMessages"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/message_icon"
             android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="See Messages"/>
+            android:contentDescription="See Messages"
+            android:src="@drawable/message_icon" />
 
         <ImageButton
             android:id="@+id/buttonLogOut"
-            android:onClick="log_out"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/logout_icon"
             android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="Logout"/>
+            android:contentDescription="Logout"
+            android:onClick="log_out"
+            android:src="@drawable/logout_icon" />
     </LinearLayout>
 
     <RelativeLayout
