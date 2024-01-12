@@ -3,6 +3,7 @@ package com.example.instagram_copy;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,16 +17,22 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class PostAdapter extends ArrayAdapter<Post> {
     private Context context;
     private ArrayList<Post> posts;
+
 
     public PostAdapter(Context context, ArrayList<Post> posts) {
         super(context, 0, posts);
@@ -36,6 +43,8 @@ public class PostAdapter extends ArrayAdapter<Post> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+
+
         View listItemView = convertView;
 
         if (listItemView == null) {
@@ -57,15 +66,35 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
         dateTextView.setText(date_converted);
 
-        new DownloadImageFromInternet((ImageView) post_image).execute(currentPost.getImageUrl()); //prev version
-        //  Picasso.get()
-        //         .load(currentPost.getImageUrl())
-        //         .into(post_image);
 
+        //Prev version
+        //new DownloadImageFromInternet((ImageView) post_image).execute(currentPost.getImageUrl()); //prev version
+        DownloadImageFirebase(post_image);
 
         return listItemView;
     }
 
+
+    private void DownloadImageFirebase(ImageView post_image){
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference mountainImagesRef = storageRef.child("images/mountains.jpg");
+        mountainImagesRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                //convert bytes to bitmap
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                //set image on image_view
+                post_image.setImageBitmap(bitmap);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Obsługa błędu pobierania obrazu
+                Toast.makeText(context.getApplicationContext(), "Please wait, it may take a few minute...",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
 
 //code source:https://www.tutorialspoint.com/how-do-i-load-an-imageview-by-url-on-android
 private class DownloadImageFromInternet extends AsyncTask<String, Void, Bitmap> {

@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -31,6 +32,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,12 +42,12 @@ import java.util.UUID;
 public class AddPostFragment extends Fragment {
 
     private EditText descriptionEditText;
-    private Button postButton,chooseButton, uploadButton;
+    private Button postButton, chooseButton, uploadButton;
     private DatabaseReference postsReference;
 
 
-
     private ImageView imageViewSelectedPhoto;
+
 
     private SharedPreferences sp;
 
@@ -53,7 +55,8 @@ public class AddPostFragment extends Fragment {
     private final int PICK_IMAGE_REQUEST = 22;
     private Uri filePath;
     FirebaseStorage storage;
-    StorageReference storageReference;
+    StorageReference storageRef;
+    StorageReference mountainImagesRef;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,8 +73,9 @@ public class AddPostFragment extends Fragment {
 
         postsReference = FirebaseDatabase.getInstance().getReference("posts");
 
-        FirebaseStorage storage = FirebaseStorage.getInstance("gs://my-custom-bucket");
-        storageReference = storage.getReference();
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
+        mountainImagesRef = storageRef.child("images/mountains.jpg");
 
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +92,7 @@ public class AddPostFragment extends Fragment {
         uploadButton.setOnClickListener(new View.OnClickListener() { //TODO
             @Override
             public void onClick(View v) {
+                uploadImage();
             }
         });
         return view;
@@ -97,7 +102,7 @@ public class AddPostFragment extends Fragment {
         final String description = descriptionEditText.getText().toString().trim();
 
         if (description.isEmpty()) {
-                Toast.makeText(requireContext(), "Please enter a description", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Please enter a description", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -118,8 +123,7 @@ public class AddPostFragment extends Fragment {
         requireActivity().finish();
     }
 
-    private void SelectImage()
-    {
+    private void SelectImage() {
         // Defining Implicit Intent to mobile gallery
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -130,15 +134,14 @@ public class AddPostFragment extends Fragment {
                         "Select Image from here..."),
                 PICK_IMAGE_REQUEST);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-
         // checking request code and result code
         // if request code is PICK_IMAGE_REQUEST and
         // resultCode is RESULT_OK
-        // then set image in the image view
+        //then set image in the image view
         if (requestCode == PICK_IMAGE_REQUEST
                 && resultCode == RESULT_OK
                 && data != null
@@ -147,8 +150,7 @@ public class AddPostFragment extends Fragment {
             // Get the Uri of data
             filePath = data.getData();
             try {
-
-                // Setting image on image view using Bitmap
+                //set image on image view using Bitmap
                 Bitmap bitmap = MediaStore
                         .Images
                         .Media
@@ -156,86 +158,33 @@ public class AddPostFragment extends Fragment {
                                 requireActivity().getContentResolver(),
                                 filePath);
                 imageViewSelectedPhoto.setImageBitmap(bitmap);
-            }
-
-            catch (IOException e) {
+            } catch (IOException e) {
                 // Log the exception
                 e.printStackTrace();
             }
         }
     }
-    private void uploadImage()
-    {
-        if (filePath != null) {
 
-            // Code for showing progressDialog while uploading
-            ProgressDialog progressDialog
-                    = new ProgressDialog(getContext());
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
-
-            // Defining the child of storageReference
-            StorageReference ref
-                    = storageReference
-                    .child(
-                            "images/"
-                                    + UUID.randomUUID().toString());
-
-            // adding listeners on upload
-            // or failure of image
-            ref.putFile(filePath)
-                    .addOnSuccessListener(
-                            new OnSuccessListener<UploadTask.TaskSnapshot>() {
-
-                                @Override
-                                public void onSuccess(
-                                        UploadTask.TaskSnapshot taskSnapshot)
-                                {
-
-                                    // Image uploaded successfully
-                                    // Dismiss dialog
-                                    progressDialog.dismiss();
-                                    Toast
-                                            .makeText(requireActivity(),
-                                                    "Image Uploaded!!",
-                                                    Toast.LENGTH_SHORT)
-                                            .show();
-                                }
-                            })
-
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e)
-                        {
-
-                            // Error, Image not uploaded
-                            progressDialog.dismiss();
-                            Toast
-                                    .makeText(requireActivity(),
-                                            "Failed " + e.getMessage(),
-                                            Toast.LENGTH_SHORT)
-                                    .show();
-                        }
-                    })
-                    .addOnProgressListener(
-                            new OnProgressListener<UploadTask.TaskSnapshot>() {
-
-                                // Progress Listener for loading
-                                // percentage on the dialog box
-                                @Override
-                                public void onProgress(
-                                        UploadTask.TaskSnapshot taskSnapshot)
-                                {
-                                    double progress
-                                            = (100.0
-                                            * taskSnapshot.getBytesTransferred()
-                                            / taskSnapshot.getTotalByteCount());
-                                    progressDialog.setMessage(
-                                            "Uploaded "
-                                                    + (int)progress + "%");
-                                }
-                            });
-        }
+    private void uploadImage() {
+        imageViewSelectedPhoto.setDrawingCacheEnabled(true);
+        imageViewSelectedPhoto.buildDrawingCache();
+        Bitmap bitmap = ((BitmapDrawable) imageViewSelectedPhoto.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        UploadTask uploadTask = mountainImagesRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                // ...
+            }
+        });
     }
 
 }

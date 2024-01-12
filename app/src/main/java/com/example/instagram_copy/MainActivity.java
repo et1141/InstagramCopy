@@ -43,9 +43,8 @@ public class MainActivity extends AppCompatActivity {
             profile_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.mainActivity_fragments_layout, new PostsFragment(sp.getString("username", "")))
+                            .replace(R.id.mainActivity_fragments_layout, new PostsFragment("et11"))
                             .commit();
                 }
             });
