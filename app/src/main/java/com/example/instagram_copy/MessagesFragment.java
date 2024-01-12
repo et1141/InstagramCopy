@@ -1,5 +1,7 @@
 package com.example.instagram_copy;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,16 +24,23 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -73,18 +82,12 @@ public class MessagesFragment extends Fragment {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 addMessage();
                 getAllMessages();
                 int scrollTo = messageRiver.getBottom() - scrollView.getHeight();
                 scrollView.smoothScrollTo(0, scrollTo); // Use smoothScrollTo for a smooth scrolling effect
             }
         });
-
-
-
-// Assuming you want to scroll to the bottom when the fragment's view is created
-
 
 
         return view;
@@ -105,7 +108,8 @@ public class MessagesFragment extends Fragment {
         String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
 
-        Message sentMessage = new Message(message, sp.getString("username", ""), "Adrian");
+        //Message sentMessage = new Message(message, sp.getString("username", ""), "Adrian");
+        Message sentMessage = new Message(message,sp.getString("username", ""), "Adrian");
         // Add post to the database
         postsReference.child(postId).setValue(sentMessage);
 
@@ -131,16 +135,22 @@ public class MessagesFragment extends Fragment {
 
                     if (message != null) {
                         // Log the message details
-                        Log.d("MessageLog", "Message: " + message.getMessage());
-                        Log.d("MessageLog", "Sender: " + message.getSender());
-                        Log.d("MessageLog", "Receiver: " + message.getTarget());
+                        Log.d("MessageLog", "Message: " + message.getMessage().trim());
+                        Log.d("MessageLog", "Sender: " + message.getSender().trim());
+                        Log.d("MessageLog", "Receiver: " + message.getTarget().trim());
                         Log.d("MessageLog", "---------------------------");
 
-                        TextView temp = new TextView(getContext());
-                        temp.setLayoutParams(new LinearLayout.LayoutParams(500, ViewGroup.LayoutParams.WRAP_CONTENT));
-                        temp.setText(message.getMessage());
+
+                        if((message.getSender() == sp.getString("username", "")) && (message.getTarget() == "Adrian"))
+                        {
+                            TextView temp = new TextView(getContext());
+                            temp.setLayoutParams(new LinearLayout.LayoutParams(500, ViewGroup.LayoutParams.WRAP_CONTENT));
+                            temp.setText(message.getMessage());
+                            messageRiver.addView(temp);
+                        }
+
                         //((LinearLayout.LayoutParams) temp.getLayoutParams()).gravity = Gravity.END;
-                        messageRiver.addView(temp);
+
 
                     }
                 }
@@ -151,7 +161,6 @@ public class MessagesFragment extends Fragment {
             }
         });
     }
-
     private void removeAllMessages() {
 
         try {

@@ -41,6 +41,8 @@ dependencies {
     implementation("com.google.firebase:firebase-database:20.3.0")
     implementation("com.google.firebase:firebase-crashlytics:18.6.0")
     implementation ("com.google.firebase:firebase-storage:19.1.0")
+    implementation ("com.google.firebase:firebase-firestore:17.0.4")
+    implementation ("com.google.firebase:firebase-core:16.0.1")
     implementation ("com.firebaseui:firebase-ui-database:7.1.1")
     implementation ("com.squareup.picasso:picasso:2.8")
     implementation("com.google.firebase:firebase-analytics:21.5.0")
