@@ -40,7 +40,15 @@ public class MainActivity extends AppCompatActivity {
             messages_button = findViewById(R.id.buttonMessages);
             home_button = findViewById(R.id.buttonHome);
 
+            profile_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.mainActivity_fragments_layout, new PostsFragment(sp.getString("username", "")))
+                            .commit();
+                }
+            });
 
             home_button.setOnClickListener(new View.OnClickListener() {
                 @Override

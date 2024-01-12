@@ -16,8 +16,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class PostAdapter extends ArrayAdapter<Post> {
     private Context context;
@@ -47,8 +51,16 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
         usernameTextView.setText(currentPost.getUsername());
         descriptionTextView.setText(currentPost.getDescription());
-        dateTextView.setText(currentPost.getDate());
-        new DownloadImageFromInternet((ImageView) post_image).execute(currentPost.getImageUrl());
+
+        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date_converted = date.format(new Date(currentPost.getDate()));
+
+        dateTextView.setText(date_converted);
+
+        new DownloadImageFromInternet((ImageView) post_image).execute(currentPost.getImageUrl()); //prev version
+        //  Picasso.get()
+        //         .load(currentPost.getImageUrl())
+        //         .into(post_image);
 
 
         return listItemView;

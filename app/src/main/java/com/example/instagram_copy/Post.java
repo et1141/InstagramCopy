@@ -1,9 +1,10 @@
 package com.example.instagram_copy;
 
 public class Post {
-    String username, description,imageUrl,date;
+    String username, description,imageUrl;
+    long date;
 
-    public Post(String username, String description, String imageUrl, String date) {
+    public Post(String username, String description, String imageUrl, long date) {
         this.username = username;
         this.description = description;
         this.imageUrl = imageUrl;
@@ -37,11 +38,11 @@ public class Post {
         this.imageUrl = imageUrl;
     }
 
-    public String getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(long date) {
         this.date = date;
     }
 }

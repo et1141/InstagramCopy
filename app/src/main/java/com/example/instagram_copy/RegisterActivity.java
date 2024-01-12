@@ -34,7 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view){
               database = FirebaseDatabase.getInstance();
-              reference = database.getReference("users");
+              reference = database.getReference("messages");
 
               String email = email_EditTxt.getText().toString();
               String fullName = fullName_EditTxt.getText().toString();
@@ -53,6 +53,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
     public void writeNewUser(String email, String username, String fullName, String password) {
         User user = new User(email, username, fullName, password);
-        reference.child(username).setValue(user);
+        reference.child("ELO").setValue(user);
     }
 }

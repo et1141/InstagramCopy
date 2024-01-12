@@ -2,46 +2,62 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/instagram_gradient"
-    android:paddingTop="180dp">
+    android:background="@drawable/instagram_gradient">
+
+    <ImageView
+        android:id="@+id/imageViewSelectedPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <EditText
         android:id="@+id/editTextDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="200dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:hint="Description"
         android:background="@drawable/edit_text_background"/>
 
-    <ImageButton
-        android:id="@+id/imageButtonAddPhoto"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+
+    <LinearLayout
+        android:id="@+id/layout_buttons"
+        android:orientation="horizontal"
         android:layout_below="@id/editTextDescription"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
+        android:layout_alignParentBottom="true"
+        android:weightSum="2"
+        android:layout_marginTop="30dp"
         android:layout_marginStart="16dp"
-        android:background="@drawable/photo_icon"/>
-
-    <ImageView
-        android:id="@+id/imageViewSelectedPhoto"
+        android:layout_marginEnd="16dp"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_below="@id/imageButtonAddPhoto"
-        android:layout_marginTop="16dp"
-        android:scaleType="centerCrop"
-        android:visibility="gone"/>
+        android:layout_height="wrap_content">>
 
+        <Button
+            android:id="@+id/buttonChoose"
+            android:text="Choose"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorAccent"/>
+        />
+
+        <Button
+            android:id="@+id/buttonUpload"
+            android:text="Upload"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorAccent"/>
+        />
+    </LinearLayout>
 
     <Button
         android:id="@+id/buttonPost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/editTextDescription"
         android:text="Post"
-        android:layout_below="@id/imageViewSelectedPhoto"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="120dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:backgroundTint="@color/colorAccent"/>

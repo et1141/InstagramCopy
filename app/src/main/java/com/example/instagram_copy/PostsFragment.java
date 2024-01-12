@@ -29,51 +29,43 @@
         private DatabaseReference postsReference;
         private ListView postsListView;
 
+        public PostsFragment() {
+            postsReference = FirebaseDatabase.getInstance().getReference().child("posts");
+        }
+
+        public PostsFragment (String username) {
+            postsReference = FirebaseDatabase.getInstance().getReference().child("posts");//.orderByChild("username").equalTo(username);
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_posts, container, false);
 
-            postsReference = FirebaseDatabase.getInstance().getReference().child("posts");
             postsListView = view.findViewById(R.id.listViewPosts);
 
-            ArrayList<Post> posts = new ArrayList<Post>(); //TODO make downloadPosts() work
-            posts = downloadPosts(postsReference);
-            //if you want posts of specific user:
-
-            //example posts
-            String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-            posts.add(new Post("et11", "My amazing dogs:)", "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=600", currentDate));
-            posts.add(new Post("et11", "elon musk", "https://media.cnn.com/api/v1/images/stellar/prod/2023-11-30t135953z-879534570-rc2on4amk5bn-rtrmadp-3-twitter-musk.jpg?c=16x9&q=h_833,w_1480,c_fill", currentDate));
-
-            PostAdapter adapter = new PostAdapter(requireContext(), posts);
-            // Ustaw adapter dla ListView
-
-            postsListView.setAdapter(adapter);
+            // Use a callback to handle the completion of downloadPosts()
+            downloadPosts(new OnPostsDownloadedListener() {
+                @Override
+                public void onPostsDownloaded(ArrayList<Post> posts) {
+                    // Now you can proceed with the rest of the code
+                    PostAdapter adapter = new PostAdapter(requireContext(), posts);
+                    // set adapter for ListView
+                    postsListView.setAdapter(adapter);
+                }
+            });
 
             return view;
         }
-        public ArrayList<Post> downloadPosts(DatabaseReference posts_ref) {
-            ArrayList<Post> posts = new ArrayList<>();
-            posts_ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                        Post post = postSnapshot.getValue(Post.class);
-                        if (post != null) {
-                            posts.add(post);
-                        }
-                    }
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e("Firebase", "Failed to read value.", error.toException());
-                }
-            });
-            return posts;
+
+
+        public interface OnPostsDownloadedListener {
+            void onPostsDownloaded(ArrayList<Post> posts);
         }
-        public ArrayList<Post> downloadPosts_user(String username) {
+
+        public void downloadPosts(OnPostsDownloadedListener listener) {
             ArrayList<Post> posts = new ArrayList<>();
+
             postsReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -83,15 +75,20 @@
                             posts.add(post);
                         }
                     }
+                    // Notify the listener that posts have been downloaded
+                    listener.onPostsDownloaded(posts);
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
                     Log.e("Firebase", "Failed to read value.", error.toException());
+                    // Notify the listener about the failure, if needed
+                    // listener.onPostsDownloadFailed(error);
                 }
             });
-            return posts;
         }
-
+    }
+ /* Some old code
 
 
     //not working:(
@@ -143,3 +140,4 @@
         postsListView.setAdapter(adapter);
     }
 }
+*/
