@@ -74,10 +74,10 @@
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                        Post post = postSnapshot.getValue(Post.class);
-                        if (post != null) {
-                            posts.add(post);
-                        }
+                            Post post = postSnapshot.getValue(Post.class);
+                            if (post != null) {
+                                posts.add(post);
+                            }
                     }
                     //infor to the listener that posts have been downloaded
                     listener.onPostsDownloaded(posts);

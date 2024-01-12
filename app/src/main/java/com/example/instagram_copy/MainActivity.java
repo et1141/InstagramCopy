@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,6 +56,16 @@ public class MainActivity extends AppCompatActivity {
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.mainActivity_fragments_layout, new PostsFragment())
                             .commit();
+                }
+            });
+
+            messages_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.mainActivity_fragments_layout, new MessagesFragment())
+                            .commit();
+
                 }
             });
 
