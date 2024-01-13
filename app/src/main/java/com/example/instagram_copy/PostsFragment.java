@@ -33,6 +33,7 @@
         }
 
         public PostsFragment (String username) {
+            Log.i("Prikazivanje postova jednog", username);
             Query query = FirebaseDatabase.getInstance().getReference()
                     .child("posts")
                     .orderByChild("username")
