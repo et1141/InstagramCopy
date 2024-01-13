@@ -54,6 +54,13 @@ public class PostAdapter extends ArrayAdapter<Post> {
         Post currentPost = getItem(position);
 
         TextView usernameTextView = listItemView.findViewById(R.id.post_username);
+        usernameTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity ma = (MainActivity) context;
+                ma.showUserProfile(currentPost.getUsername());
+            }
+        });
         TextView descriptionTextView = listItemView.findViewById(R.id.post_description);
         TextView dateTextView = listItemView.findViewById(R.id.post_date);
         ImageView post_image = listItemView.findViewById(R.id.post_image);
