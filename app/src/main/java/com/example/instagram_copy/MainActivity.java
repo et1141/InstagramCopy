@@ -44,10 +44,8 @@ public class MainActivity extends AppCompatActivity {
             profile_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.mainActivity_fragments_layout, new PostsFragment(sp.getString("username", "")))
-                            .commit();
+                            .replace(R.id.mainActivity_fragments_layout, new UserFragment(sp, sp.getString("username", ""))).commit();
                 }
             });
 
@@ -90,6 +88,12 @@ public class MainActivity extends AppCompatActivity {
     private void switch_loginView(){
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
+    }
+
+    public void showUserProfile(String username){
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.mainActivity_fragments_layout, new UserFragment(sp, username)).commit();
+
     }
 
 }

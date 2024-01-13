@@ -5,19 +5,18 @@
     import android.view.LayoutInflater;
     import android.view.View;
     import android.view.ViewGroup;
-    import android.widget.ArrayAdapter;
     import android.widget.ListView;
     import android.widget.TextView;
 
     import androidx.annotation.NonNull;
     import androidx.fragment.app.Fragment;
 
-    import com.firebase.ui.database.FirebaseListAdapter;
-    import com.firebase.ui.database.FirebaseListOptions;
+
     import com.google.firebase.database.DataSnapshot;
     import com.google.firebase.database.DatabaseError;
     import com.google.firebase.database.DatabaseReference;
     import com.google.firebase.database.FirebaseDatabase;
+    import com.google.firebase.database.Query;
     import com.google.firebase.database.ValueEventListener;
 
     import java.text.SimpleDateFormat;
@@ -34,7 +33,13 @@
         }
 
         public PostsFragment (String username) {
-            postsReference = FirebaseDatabase.getInstance().getReference().child("posts");//.orderByChild("username").equalTo(username);
+            Log.i("Prikazivanje postova jednog", username);
+            Query query = FirebaseDatabase.getInstance().getReference()
+                    .child("posts")
+                    .orderByChild("username")
+                    .equalTo(username);
+
+            postsReference = query.getRef();
         }
 
         @Override
@@ -75,15 +80,13 @@
                                 posts.add(post);
                             }
                     }
-                    // Notify the listener that posts have been downloaded
+                    //infor to the listener that posts have been downloaded
                     listener.onPostsDownloaded(posts);
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
                     Log.e("Firebase", "Failed to read value.", error.toException());
-                    // Notify the listener about the failure, if needed
-                    // listener.onPostsDownloadFailed(error);
                 }
             });
         }
