@@ -28,18 +28,18 @@
         private DatabaseReference postsReference;
         private ListView postsListView;
 
+
+        String username1;
+
         public PostsFragment() {
             postsReference = FirebaseDatabase.getInstance().getReference().child("posts");
+            this.username1="";
         }
 
         public PostsFragment (String username) {
-            Log.i("Prikazivanje postova jednog", username);
-            Query query = FirebaseDatabase.getInstance().getReference()
-                    .child("posts")
-                    .orderByChild("username")
-                    .equalTo(username);
+            postsReference = FirebaseDatabase.getInstance().getReference().child("posts");
 
-            postsReference = query.getRef();
+            this.username1 = username;
         }
 
         @Override
@@ -77,7 +77,11 @@
                     for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                             Post post = postSnapshot.getValue(Post.class);
                             if (post != null) {
-                                posts.add(post);
+                                if (username1!="" &&  !username1.equals(post.getUsername())){
+                                posts.add(post);}
+                                else{
+                                    posts.add(post);
+                                }
                             }
                     }
                     //infor to the listener that posts have been downloaded
@@ -94,7 +98,7 @@
  /* Some old code
 
 
-    //not working:(
+    //
     private void displayPosts() {
         FirebaseListOptions<Post> options = new FirebaseListOptions.Builder<Post>()
                 .setLayout(R.layout.post_item)

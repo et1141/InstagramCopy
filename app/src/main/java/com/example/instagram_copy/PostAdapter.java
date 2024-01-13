@@ -76,16 +76,19 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
         //Prev version
         //new DownloadImageFromInternet((ImageView) post_image).execute(currentPost.getImageUrl()); //prev version
-        DownloadImageFirebase(post_image);
+
+        long postId = currentPost.getDate();
+        DownloadImageFirebase(post_image,postId);
 
         return listItemView;
     }
 
 
-    private void DownloadImageFirebase(ImageView post_image){
+    private void DownloadImageFirebase(ImageView post_image,long post_id){
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        StorageReference mountainImagesRef = storageRef.child("images/mountains.jpg");
-        mountainImagesRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        StorageReference postImagesRef = storageRef.child("images/" + post_id+".jpg");
+
+        postImagesRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 //convert bytes to bitmap
