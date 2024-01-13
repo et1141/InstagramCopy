@@ -89,8 +89,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                // Obsługa błędu pobierania obrazu
-                Toast.makeText(context.getApplicationContext(), "Please wait, it may take a few minute...",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context.getApplicationContext(), "Please wait, it may take a few minute...",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -101,7 +100,7 @@ private class DownloadImageFromInternet extends AsyncTask<String, Void, Bitmap> 
     ImageView imageView;
     public DownloadImageFromInternet(ImageView imageView) {
         this.imageView=imageView;
-        Toast.makeText(context.getApplicationContext(), "Please wait, it may take a few minute...",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context.getApplicationContext(), "Please wait, it may take a few minute...",Toast.LENGTH_SHORT).show();
     }
     protected Bitmap doInBackground(String... urls) {
         String imageURL=urls[0];

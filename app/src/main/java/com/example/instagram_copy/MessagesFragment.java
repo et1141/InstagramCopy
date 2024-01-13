@@ -32,10 +32,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -109,7 +105,7 @@ public class MessagesFragment extends Fragment {
 
 
         //Message sentMessage = new Message(message, sp.getString("username", ""), "Adrian");
-        Message sentMessage = new Message(message,sp.getString("username", ""), "Adrian");
+        Message sentMessage = new Message(message,sp.getString("username", ""), "fbenedek");
         // Add post to the database
         postsReference.child(postId).setValue(sentMessage);
 
@@ -141,11 +137,19 @@ public class MessagesFragment extends Fragment {
                         Log.d("MessageLog", "---------------------------");
 
 
-                        if((message.getSender() == sp.getString("username", "")) && (message.getTarget() == "Adrian"))
+                        if((message.getSender().equals(sp.getString("username", ""))) && (message.getTarget().equals("fbenedek")))
                         {
+                            Log.d("MessageLog:Benedek", "magic");
                             TextView temp = new TextView(getContext());
                             temp.setLayoutParams(new LinearLayout.LayoutParams(500, ViewGroup.LayoutParams.WRAP_CONTENT));
-                            temp.setText(message.getMessage());
+                            temp.setText(message.getSender() +"\n"+ message.getMessage());
+                            ((LinearLayout.LayoutParams) temp.getLayoutParams()).gravity = Gravity.END;
+                            messageRiver.addView(temp);
+                        } else if ((message.getSender().equals("fbenedek")) && (message.getTarget().equals(sp.getString("username", "")))) {
+                            TextView temp = new TextView(getContext());
+                            temp.setLayoutParams(new LinearLayout.LayoutParams(500, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                            temp.setText(message.getSender() +"\n"+ message.getMessage());
                             messageRiver.addView(temp);
                         }
 
