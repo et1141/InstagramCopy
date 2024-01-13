@@ -4,6 +4,7 @@ import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -60,6 +61,7 @@ public class MessagesFragment extends Fragment {
     private ScrollView scrollView;
 
     private SharedPreferences sp;
+    private String receiver;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,6 +75,9 @@ public class MessagesFragment extends Fragment {
         messagePrompt = view.findViewById(R.id.textPrompt);
         messageRiver = view.findViewById(R.id.messageRiver);
         scrollView = view.findViewById(R.id.scrollView);
+        Bundle args = getArguments();
+        receiver = args.getString("receiver");
+
         getAllMessages();
 
 
@@ -108,8 +113,8 @@ public class MessagesFragment extends Fragment {
         String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
 
-        //Message sentMessage = new Message(message, sp.getString("username", ""), "Adrian");
-        Message sentMessage = new Message(message,sp.getString("username", ""), "Adrian");
+        //Message sentMessage = new Message(message, sp.getString("username", ""), receiver);
+        Message sentMessage = new Message(message,sp.getString("username", ""), receiver);
         // Add post to the database
         postsReference.child(postId).setValue(sentMessage);
 
@@ -134,20 +139,27 @@ public class MessagesFragment extends Fragment {
                     Message message = snapshot.getValue(Message.class);
 
                     if (message != null) {
-                        // Log the message details
-                        Log.d("MessageLog", "Message: " + message.getMessage().trim());
-                        Log.d("MessageLog", "Sender: " + message.getSender().trim());
-                        Log.d("MessageLog", "Receiver: " + message.getTarget().trim());
-                        Log.d("MessageLog", "---------------------------");
 
 
-                        if((message.getSender() == sp.getString("username", "")) && (message.getTarget() == "Adrian"))
+
+                        if((message.getSender().equals(sp.getString("username", ""))) && (message.getTarget().equals(receiver)))
                         {
+                            Log.d("MessageLog:Benedek", "magic");
                             TextView temp = new TextView(getContext());
                             temp.setLayoutParams(new LinearLayout.LayoutParams(500, ViewGroup.LayoutParams.WRAP_CONTENT));
                             temp.setText(message.getMessage());
+                            temp.setTextColor(Color.BLACK);
+                            ((LinearLayout.LayoutParams) temp.getLayoutParams()).gravity = Gravity.END;
+                            messageRiver.addView(temp);
+                        } else if ((message.getSender().equals(receiver)) && (message.getTarget().equals(sp.getString("username", "")))) {
+                            TextView temp = new TextView(getContext());
+                            temp.setLayoutParams(new LinearLayout.LayoutParams(500, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                            temp.setText(message.getMessage());
+                            temp.setTextColor(Color.BLACK);
                             messageRiver.addView(temp);
                         }
+
 
                         //((LinearLayout.LayoutParams) temp.getLayoutParams()).gravity = Gravity.END;
 

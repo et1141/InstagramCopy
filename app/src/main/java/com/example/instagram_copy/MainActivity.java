@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.mainActivity_fragments_layout, new MessagesFragment())
+                            .replace(R.id.mainActivity_fragments_layout, new messageList())
                             .commit();
 
                 }
