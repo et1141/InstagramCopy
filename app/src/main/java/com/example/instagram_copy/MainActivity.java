@@ -11,9 +11,11 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             addPost_button = findViewById(R.id.buttonAddPost);
             messages_button = findViewById(R.id.buttonMessages);
             home_button = findViewById(R.id.buttonHome);
-
+            TextView button_search = findViewById(R.id.buttonSearch);
 
             profile_button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -76,21 +78,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            search_editText.addTextChangedListener(new TextWatcher() {
-                String text;
+            button_search.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
+                public void onClick(View v) {
                     String searchFr = search_editText.getText().toString();
                     if (searchFr.equals("")){
                         getSupportFragmentManager().beginTransaction()
@@ -100,9 +90,36 @@ public class MainActivity extends AppCompatActivity {
                         searchForUsers(searchFr);
 
                     }
-
                 }
             });
+
+//            search_editText.addTextChangedListener(new TextWatcher() {
+//                String text;
+//                @Override
+//                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//                }
+//
+//                @Override
+//                public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//                }
+//
+//                @Override
+//                public void afterTextChanged(Editable s) {
+//
+//                    String searchFr = search_editText.getText().toString();
+//                    if (searchFr.equals("")){
+//                        getSupportFragmentManager().beginTransaction()
+//                                .replace(R.id.mainActivity_fragments_layout, new PostsFragment(sp.getString("username", "default"), true))
+//                                .commit();
+//                    } else {
+//                        searchForUsers(searchFr);
+//
+//                    }
+//
+//                }
+//            });
 
 
 
