@@ -27,6 +27,13 @@
             android:padding="8dp"
             android:textColor="@android:color/black" />
 
+        <TextView
+            android:id="@+id/buttonSearch"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="Search"
+             />
+
         <!-- Add Post Button -->
         <ImageButton
             android:id="@+id/buttonHome"
