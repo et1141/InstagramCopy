@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -63,7 +64,7 @@ public class FollowersFragment extends Fragment {
         this.username1 = user1;
         this.username2 = user2;
         this.following = following;
-        followingReference = FirebaseDatabase.getInstance().getReference("following4");
+        followingReference = FirebaseDatabase.getInstance().getReference("following11");
 
 
     }
@@ -111,10 +112,11 @@ public class FollowersFragment extends Fragment {
         followingQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                usernames = new ArrayList<>();
                 if (snapshot.exists()) {
                     for (DataSnapshot d : snapshot.getChildren()) {
                         Following f = d.getValue(Following.class);
-                            Log.i("Sta ima", f.getUser2());
+                            Log.i("Sta ima ksks", f.getUser2());
                             if (f.getFollowing()) {
                                 if (following)
                                     usernames.add(f.getUser2());
@@ -122,8 +124,9 @@ public class FollowersFragment extends Fragment {
                                     usernames.add(f.getUser1());
                             }
                     }
-                    setupFollowers();
+
                 }
+                setupFollowers();
             }
 
             @Override
@@ -137,14 +140,21 @@ public class FollowersFragment extends Fragment {
 //        vals.add("User1");
 //        vals.add("user2");
         //adapter=new ArrayAdapter<String>(getContext(), R.layout.follower_item,vals);
-        if (usernames.size() == 0){
-            //TextView infoMessage
-            Log.i("INFO MESSAGE MINE", "No users to display.");
-        }
+
         return v;
     }
 
     private void setupFollowers(){
+        Log.i("Usernames", usernames.toString());
+        Log.i("Ima ih ", usernames.size() + "");
+        if (usernames.size() == 0){
+            TextView tv = v.findViewById(R.id.no_users_tv);
+            tv.setVisibility(View.VISIBLE);
+            //TextView infoMessage
+            Log.i("INFO MESSAGE MINE", "No users to display.");
+            return;
+        }
+
         ListView listView = (ListView) v.findViewById(R.id.listViewFollowers);
         //listView.setAdapter(adapter);
         Log.i("koliko uih ima", usernames.size() + "");
