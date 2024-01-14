@@ -97,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
                                 .replace(R.id.mainActivity_fragments_layout, new PostsFragment(sp.getString("username", "default"), true))
                                 .commit();
                     } else {
-                        Log.i("Stringy string searching for", searchFr);
                         searchForUsers(searchFr);
 
                     }
@@ -105,36 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            /*search_editText.setOnKeyListener(new View.OnKeyListener() {
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    // If the event is a key-down event on the "enter" button
-                    Log.i("Pritisnuto nesto", search_editText.getText().toString());
-                    // no posts to show
-                    String search2 = search_editText.getText().toString();
 
-                    Log.i("MMMMMMMMMMMMMsearched", search2);
-                    if ((event.getAction() == KeyEvent.ACTION_DOWN)
-                            //&& (keyCode == KeyEvent.KEYCODE_ENTER)
-                    ) {
-                        // Perform action on key press
-                        if (search2.equals("")){
-                            Log.i("PRazan string", "???");
-
-                        }
-                        else {
-                            String searchFr = search_editText.getText().toString();
-                            Log.i("Stringy string za pretrsge", searchFr);
-                            searchForUsers(searchFr);
-
-                        }
-                        //searchForUsers(search_editText.getText().toString());
-
-                        //Toast.makeText(HelloFormStuff.this, edittext.getText(), Toast.LENGTH_SHORT).show();
-                        return true;
-                    }
-                    return false;
-                }
-            });*/
 
             addPost_button.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -67,8 +67,6 @@
                 return view;
             }
 
-            //Log.i("oooDa li je feed, username", username1);
-            //Log.i("oooDa li je feed", feed + "");
 
 //            downloadFeed(new OnPostsDownloadedListener() {
 //                @Override
@@ -183,7 +181,6 @@
                     }
                 });
             } else {
-                Log.i("Ucitavanje feeda", "aaa");
                 loadFeed();
                 postsReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

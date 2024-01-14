@@ -113,7 +113,6 @@ public class FollowersFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        //Log.i("eeeeeeeeeeeeeeeeeee", this.username1);
 
         View v =  inflater.inflate(R.layout.fragment_followers, container, false);
         this.v = v;
@@ -137,7 +136,6 @@ public class FollowersFragment extends Fragment {
                 if (snapshot.exists()) {
                     for (DataSnapshot d : snapshot.getChildren()) {
                         Following f = d.getValue(Following.class);
-                            Log.i("Sta ima ksks", f.getUser2());
                             if (f.getFollowing()) {
                                 if (following)
                                     usernames.add(f.getUser2());
@@ -152,11 +150,6 @@ public class FollowersFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-
-        //        ArrayList<String> vals = new ArrayList<>();
-//        vals.add("User1");
-//        vals.add("user2");
-        //adapter=new ArrayAdapter<String>(getContext(), R.layout.follower_item,vals);
 
         return v;
     }
@@ -183,19 +176,13 @@ public class FollowersFragment extends Fragment {
     }
 
     private void setupFollowers(){
-        Log.i("Usernames", usernames.toString());
-        Log.i("Ima ih ", usernames.size() + "");
         if (usernames.size() == 0){
             TextView tv = v.findViewById(R.id.no_users_tv);
             tv.setVisibility(View.VISIBLE);
-            //TextView infoMessage
-            Log.i("INFO MESSAGE MINE", "No users to display.");
             return;
         }
 
         ListView listView = (ListView) v.findViewById(R.id.listViewFollowers);
-        //listView.setAdapter(adapter);
-        Log.i("koliko uih ima", usernames.size() + "");
         FollowerAdapter adapter = new FollowerAdapter(requireContext(), usernames,false);
         // set adapter for ListView
         listView.setAdapter(adapter);
