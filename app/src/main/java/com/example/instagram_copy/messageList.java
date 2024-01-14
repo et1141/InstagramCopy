@@ -57,7 +57,7 @@ public class messageList extends Fragment {
                     // Assuming you have a Message class with appropriate getters
                     Message message = snapshot.getValue(Message.class);
 
-                    if (message != null) {
+                    if (message != null && sp.getString("username", "") != null) {
 
 
 

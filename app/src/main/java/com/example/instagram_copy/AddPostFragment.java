@@ -66,6 +66,7 @@ public class AddPostFragment extends Fragment {
 
         descriptionEditText = view.findViewById(R.id.editTextDescription);
         postButton = view.findViewById(R.id.buttonPost);
+
         chooseButton = view.findViewById(R.id.buttonChoose);
         uploadButton = view.findViewById(R.id.buttonUpload);
         imageViewSelectedPhoto = view.findViewById(R.id.imageViewSelectedPhoto);
@@ -92,12 +93,17 @@ public class AddPostFragment extends Fragment {
             public void onClick(View v) {
                 SelectImage();
             }
+
         });
         uploadButton.setOnClickListener(new View.OnClickListener() { //TODO
             @Override
 
             public void onClick(View v) {
-                uploadImage();
+
+                if(imageViewSelectedPhoto.getDrawable() != null){
+                    uploadImage();
+                }
+
             }
         });
         return view;
