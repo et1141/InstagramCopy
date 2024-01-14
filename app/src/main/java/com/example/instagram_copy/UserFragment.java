@@ -24,6 +24,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.util.Date;
 
 /**
@@ -99,6 +101,8 @@ public class UserFragment extends Fragment {
 
     }
 
+    // prikaz svojih postova
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -108,83 +112,59 @@ public class UserFragment extends Fragment {
         // remove this
         TextView tview = (TextView) view.findViewById(R.id.username_text_view);
         String txt = this.sp.getString("username", "default");
-        txt = txt + "showing " + this.username;
+        txt = this.username;
         tview.setText(txt);
-
-//        TextView tview2 = (TextView) view.findViewById(R.id.us2);
-//        String txt2 = "Showing profile in: " + username;
-//        tview2.setText(txt2);
-
-        // why is getfragmentmanager deprecated?
-        // display fragments only if user is following user
 
         // username2 is the username that is being clicked on
         // and logged in user is in sp
-        // dummy username2 below just for testing
-        // TODO remove these dummies
         String username1 = sp.getString("username", "default"); // for testing only
-        String username2 = username; // for testing only
-        //username2 = "benedek";
-        Log.i("Isuse boze1", username1);
-        Log.i("Isuse boze2", username2);
+        String username2 = username;
 
-        followingReference = FirebaseDatabase.getInstance().getReference("following4");
+        followingReference = FirebaseDatabase.getInstance().getReference("following11");
+
+        //displayAllDataFromDatabase();
+
 
         TextView tv = view.findViewById(R.id.following);
-        // i broj postova...
-        tv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displayFollowing();
-            }
-        });
+        //String tmp = sp.getString("following", "") + " following";
+        String tmp = "Following";
+        tv.setText(tmp);
 
         TextView tv2 = view.findViewById(R.id.followers);
-        // i broj postova...
-        tv2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displayFollowers();
-            }
-        });
+        tmp = "Followers";
+        tv2.setText(tmp);
+
+        TextView tv4 = view.findViewById(R.id.posts_tv);
+        tmp = "Posts";
+        tv4.setText(tmp);
+
+
 
         TextView tv3 = view.findViewById(R.id.message);
         if (username1.equals(username2)){
+            showPosts = true;
             Button b = view.findViewById(R.id.followingButton);
             b.setVisibility(View.GONE);
             setupPosts(true);
             tv3.setVisibility(View.GONE);
         }
         else {
-            //followingReference = FirebaseDatabase.getInstance().getReference("following3");
-//
-            //followingReference
-            //Query query = followingReference.whereEqualTo("user1", "CA");
             Query followingQuery = followingReference.orderByChild("user1").equalTo(username1);//.orderByChild("user2").equalTo(username2);
             followingQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    boolean found = false;
                     if (snapshot.exists()) {
-                        Log.i("Pronadjeno nesto korisni1-2", snapshot.toString());
-
                         for (DataSnapshot d : snapshot.getChildren()) {
-                            Log.i("Pronadjeno nesto", snapshot.toString());
-                            Log.i("Pronadjeno d, treba mi id", d.toString());
-
                             Following f = d.getValue(Following.class);
                             if (f.getUser2().equals(username2)) {
                                 followId1 = d.getKey();
-
-                                //followId1 = d.getKey()
-                                // da dobijem id;
-                                // za svakog korisnika da dodam broj
-                                // followers i following
-                                // i da ih prikazem i dodam dugmice
-                                Log.i("Pronadjeno nesto", "asd");
+                                found = true;
                                 if (f.getFollowing()) {
                                     // user is following user 2
                                     followingStatus = 1;
                                     setupPosts(true);
+                                    showPosts = true;
                                 } else {
                                     // a follow request is sent
                                     followingStatus = 2;
@@ -194,11 +174,15 @@ public class UserFragment extends Fragment {
                             }
 
                         }
+                        if (!found) {
+                            followingStatus = 0;
+                            setupPosts(false);
+                        }
 
                     } else {
                         // not following/requested
                         // do not show posts
-                        Log.i("No request sent", "tralala");
+                        followingStatus = 0;
                         setupPosts(false);
                     }
                 }
@@ -214,26 +198,17 @@ public class UserFragment extends Fragment {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.exists()) {
-                        Log.i("Pronadjeno nesto 2-1", snapshot.toString());
                         for (DataSnapshot d : snapshot.getChildren()) {
-                            Log.i("dddddd", d.getKey());
-                            Log.i("dddddd2", d.getChildren().toString());
-
-
                             Following f = d.getValue(Following.class);
-                            Log.i("User2 iz nez", f.getUser2().toString());
-                            Log.i("Ovo nez ni sta je, username1", username1);
                             if (f.getUser2().equals(username1)) {
                                 followId2 = d.getKey();
-
-                                Log.i("Found", f.getFollowing().toString());
                                 if (f.getFollowing()) {
                                     // user is following user 2
                                     followingStatus2 = 1;
                                     setupBeingFollowed(false);
                                 } else {
                                     // a follow request is sent
-                                    followingStatus = 2;
+                                    followingStatus2 = 2;
                                     setupBeingFollowed(true);
                                 }
                                 break;
@@ -250,26 +225,6 @@ public class UserFragment extends Fragment {
 
         }
 
-//        //Log.i("ulogovan je", this.username);
-//        getFragmentManager().beginTransaction()
-//                .replace(R.id.user_posts, new PostsFragment(this.username))
-//
-//                //.replace(R.id.mainActivity_fragments_layout, new PostsFragment(sp.getString("username", "")))
-//                .commit();
-
-
-
-
-//        // add following and followers
-//        Following f = new Following("et11", "benedek", false);
-//
-//
-//        followingReference = FirebaseDatabase.getInstance().getReference("following");
-//        String followingId = followingReference.push().getKey();
-//
-//
-//        // Add post to the database
-//        followingReference.child(followingId).setValue(f);
 
         tv3.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -292,6 +247,31 @@ public class UserFragment extends Fragment {
         return view;
     }
 
+    private void displayAllDataFromDatabase() {
+
+        followingReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot followingSnapshot : snapshot.getChildren()) {
+                        Following f = followingSnapshot.getValue(Following.class);
+                        Log.i("Z Following from database", followingSnapshot.toString());
+                    }
+                }
+                else {
+                    Log.i("Table empty", "following");
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase", "Failed to read value.", error.toException());
+            }
+        });
+    }
+
     private void setupPosts(boolean setup){
         Button button = (Button) view.findViewById(R.id.followingButton);
         if (followingStatus == 0){
@@ -304,7 +284,6 @@ public class UserFragment extends Fragment {
             });
         } else if (followingStatus == 2){
             button.setText("Requested");
-            // click?
         } else {
             button.setText("Unfollow");
             button.setOnClickListener(new View.OnClickListener() {
@@ -315,7 +294,34 @@ public class UserFragment extends Fragment {
             });
         }
         if (setup){
+            TextView tv = view.findViewById(R.id.following);
+            String tmp = "Following";
+            tv.setText(tmp);
 
+            tv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    displayFollowing();
+                }
+            });
+            TextView tv4 = view.findViewById(R.id.posts_tv);
+            tv4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setupPosts(showPosts);
+                }
+            });
+
+            TextView tv2 = view.findViewById(R.id.followers);
+            tmp = "Followers";
+            tv2.setText(tmp);
+
+            tv2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    displayFollowers();
+                }
+            });
             // add apropriate buttons
             getFragmentManager().beginTransaction()
                     .replace(R.id.user_posts, new PostsFragment(this.username))
@@ -324,35 +330,27 @@ public class UserFragment extends Fragment {
                     .commit();
         }
         else {
-
+            // refresh
+            LinearLayout tv = view.findViewById(R.id.nf);
+            tv.setVisibility(View.VISIBLE);
         }
 
 
     }
 
     private void follow(){
-        // napravi ovaj zahtjev i tjt
-        // dodati u usera followers i following brojeve
-        // kad se posalje zahtjev postaviti na requested
         String user1 = sp.getString("username", "default");
         String user2 = this.username;
         Following f = new Following(sp.getString("username", "default"), this.username , false);
-        Log.i("crko dabogda", user1);
-        Log.i("crko dabogda", user2);
-
 
         //followingReference = FirebaseDatabase.getInstance().getReference("following3");
         String followingId = followingReference.push().getKey();
-
 
         // Add post to the database
         followingReference.child(followingId).setValue(f);
 
         Button button = (Button) view.findViewById(R.id.followingButton);
         button.setText("Requested");
-
-
-
     }
 
     private void setupBeingFollowed(boolean request){
@@ -362,7 +360,6 @@ public class UserFragment extends Fragment {
             tv.setText(txt);
             LinearLayout ll = view.findViewById(R.id.requested);
             ll.setVisibility(View.VISIBLE);
-            Log.i("treba da bude vidljiv", "asdasdas");
             Button b1 = view.findViewById(R.id.accept_follow_btn);
             b1.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -377,9 +374,6 @@ public class UserFragment extends Fragment {
                     deleteFollow();
                 }
             });
-        }
-        else {
-            // samo napisati da nas prati ovaj korisnik
         }
     }
 
@@ -415,8 +409,6 @@ public class UserFragment extends Fragment {
 
     }
 
-    // kad kliknemo na followers i following, da se pokupe te liste
-    // iz following tabele
     private void unfollow(){
         // delete row from table where user2 = user profile and user1
         // = logged user
@@ -430,6 +422,7 @@ public class UserFragment extends Fragment {
                 }
          });
         }
+        // decrease followers and following
 
     private void displayFollowing(){
 
@@ -447,6 +440,10 @@ public class UserFragment extends Fragment {
         getFragmentManager().beginTransaction()
                 .replace(R.id.user_posts, new FollowersFragment(username, sp.getString("username", "default"), false))
                 .commit();
+    }
+
+    private void displayPosts(){
+
     }
 
 

@@ -5,6 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -19,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sp;
     private AddPostFragment addPostFragment = new AddPostFragment();
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.mainActivity_fragments_layout, new PostsFragment())
+                    .replace(R.id.mainActivity_fragments_layout, new PostsFragment(sp.getString("username", "default"), true))
                     .commit();
 
             search_editText = findViewById(R.id.editTextSearch);
@@ -40,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
             addPost_button = findViewById(R.id.buttonAddPost);
             messages_button = findViewById(R.id.buttonMessages);
             home_button = findViewById(R.id.buttonHome);
+
 
             profile_button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -53,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.mainActivity_fragments_layout, new PostsFragment())
+                            .replace(R.id.mainActivity_fragments_layout, new PostsFragment(sp.getString("username", "default"), true))
                             .commit();
                 }
             });
@@ -68,6 +76,36 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            search_editText.addTextChangedListener(new TextWatcher() {
+                String text;
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                    String searchFr = search_editText.getText().toString();
+                    if (searchFr.equals("")){
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.mainActivity_fragments_layout, new PostsFragment(sp.getString("username", "default"), true))
+                                .commit();
+                    } else {
+                        searchForUsers(searchFr);
+
+                    }
+
+                }
+            });
+
+
+
             addPost_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -77,6 +115,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void searchForUsers(String search) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.mainActivity_fragments_layout, new FollowersFragment(search, true)).commit();
+
     }
 
     public void log_out(View view) {

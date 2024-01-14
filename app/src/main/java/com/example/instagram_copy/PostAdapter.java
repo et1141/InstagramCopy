@@ -76,16 +76,19 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
         //Prev version
         //new DownloadImageFromInternet((ImageView) post_image).execute(currentPost.getImageUrl()); //prev version
-        DownloadImageFirebase(post_image);
+
+        long postId = currentPost.getDate();
+        DownloadImageFirebase(post_image,postId);
 
         return listItemView;
     }
 
 
-    private void DownloadImageFirebase(ImageView post_image){
+    private void DownloadImageFirebase(ImageView post_image,long post_id){
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        StorageReference mountainImagesRef = storageRef.child("images/mountains.jpg");
-        mountainImagesRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        StorageReference postImagesRef = storageRef.child("images/" + post_id+".jpg");
+
+        postImagesRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 //convert bytes to bitmap
@@ -96,8 +99,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                // Obsługa błędu pobierania obrazu
-                Toast.makeText(context.getApplicationContext(), "Please wait, it may take a few minute...",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context.getApplicationContext(), "Please wait, it may take a few minute...",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -108,7 +110,7 @@ private class DownloadImageFromInternet extends AsyncTask<String, Void, Bitmap> 
     ImageView imageView;
     public DownloadImageFromInternet(ImageView imageView) {
         this.imageView=imageView;
-        Toast.makeText(context.getApplicationContext(), "Please wait, it may take a few minute...",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context.getApplicationContext(), "Please wait, it may take a few minute...",Toast.LENGTH_SHORT).show();
     }
     protected Bitmap doInBackground(String... urls) {
         String imageURL=urls[0];

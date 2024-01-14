@@ -54,9 +54,10 @@ public class AddPostFragment extends Fragment {
     //geeksforgeeks varriables:
     private final int PICK_IMAGE_REQUEST = 22;
     private Uri filePath;
+    long milliseconds;
     FirebaseStorage storage;
     StorageReference storageRef;
-    StorageReference mountainImagesRef;
+    StorageReference postImagesRef;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,7 +76,10 @@ public class AddPostFragment extends Fragment {
 
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
-        mountainImagesRef = storageRef.child("images/mountains.jpg");
+        long milliseconds = new Date().getTime();
+
+        StorageReference postImagesRef = storageRef.child("images/" + milliseconds+".jpg");
+
 
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +95,7 @@ public class AddPostFragment extends Fragment {
         });
         uploadButton.setOnClickListener(new View.OnClickListener() { //TODO
             @Override
+
             public void onClick(View v) {
                 uploadImage();
             }
@@ -109,9 +114,8 @@ public class AddPostFragment extends Fragment {
         //generate unique post ID
         String postId = postsReference.push().getKey();
 
-        //current date will be date of posting
-        long milliseconds = new Date().getTime();
-        final Post post = new Post(sp.getString("username", ""), description, "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=600", milliseconds);
+        //recently we don't need Uri anyway. We use firebase storage where image is saved as "miliseconds.jpg"
+        final Post post = new Post(sp.getString("username", ""), description, "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w", milliseconds);
 
         // Add post to the database
         postsReference.child(postId).setValue(post);
@@ -172,15 +176,17 @@ public class AddPostFragment extends Fragment {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
-        UploadTask uploadTask = mountainImagesRef.putBytes(data);
+        UploadTask uploadTask = postImagesRef.putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
+                Toast.makeText(requireActivity().getApplicationContext(), "Failed to upload image",Toast.LENGTH_SHORT).show();
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(requireActivity().getApplicationContext(), "Uploaded image",Toast.LENGTH_SHORT).show();
+
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
                 // ...
             }

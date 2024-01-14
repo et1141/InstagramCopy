@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -97,7 +98,14 @@ public class LoginActivity extends AppCompatActivity {
                         username_EditTxt.setError(null);
                         sp.edit().putBoolean("logged", true).apply();
                         sp.edit().putString("username",username).apply();
+//                        String posts = snapshot.child(username).child("posts").getValue(Integer.class).toString();
+//                        String followers = snapshot.child(username).child("followers").getValue(Integer.class).toString();
+//                        String following = snapshot.child(username).child("following").getValue(Integer.class).toString();
+//                        sp.edit().putString("posts", posts).apply();
+//                        sp.edit().putString("followers", followers).apply();
+//                        sp.edit().putString("following", following).apply();
                         sp.edit().commit();
+
                         switch_MainView();
                     } else {
                         password_EditTxt.setError("Invalid Credentials");

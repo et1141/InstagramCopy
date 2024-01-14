@@ -23,12 +23,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/username_text_view"
+            android:textSize="26sp"
+            android:textStyle="bold"
             android:text="" />
+
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/followingButton"
+            android:background="?android:attr/selectableItemBackground"
+
             android:text=""
             android:visibility="visible"/>
     </LinearLayout>
@@ -68,6 +73,14 @@
             android:paddingRight="20dp"
             android:id="@+id/message"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Follow requests"
+            android:paddingRight="20dp"
+            android:id="@+id/follow_requests"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
         <LinearLayout
@@ -86,6 +99,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/accept_follow_btn"
+            android:background="?android:attr/selectableItemBackground"
+
             android:text="Accept"
             />
 
@@ -93,6 +108,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/delete_follow_btn"
+            android:background="?android:attr/selectableItemBackground"
+
             android:text="Delete"
             />
         </LinearLayout>
@@ -100,6 +117,24 @@
 
        </LinearLayout>
     <!-- TODO: Update blank fragment layout -->
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:orientation="horizontal"
+    android:id="@+id/nf"
+    android:visibility="gone">
+    <TextView android:layout_width="match_parent"
+        android:id="@+id/not_following_tv"
+        android:layout_height="wrap_content"
+        android:textSize="26sp"
+        android:paddingTop="150dp"
+        android:paddingLeft="20dp"
+        android:textStyle="bold"
+        android:text="Follow this user to see their posts."
+        />
+</LinearLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"

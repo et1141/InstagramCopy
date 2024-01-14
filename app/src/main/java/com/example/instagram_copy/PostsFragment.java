@@ -21,6 +21,8 @@
 
     import java.text.SimpleDateFormat;
     import java.util.ArrayList;
+    import java.util.Collections;
+    import java.util.Comparator;
     import java.util.Date;
     import java.util.Locale;
 
@@ -28,26 +30,50 @@
         private DatabaseReference postsReference;
         private ListView postsListView;
 
+        private boolean feed = false;
+
+        String username1 = null;
+
+        View view;
+        private ArrayList<String> usernames;
+
         public PostsFragment() {
             postsReference = FirebaseDatabase.getInstance().getReference().child("posts");
+            //this.username1="";
+        }
+
+        public PostsFragment (String username, boolean feed) {
+            postsReference = FirebaseDatabase.getInstance().getReference().child("posts");
+            this.feed = true;
+            this.username1 = username;
         }
 
         public PostsFragment (String username) {
-            Log.i("Prikazivanje postova jednog", username);
-            Query query = FirebaseDatabase.getInstance().getReference()
-                    .child("posts")
-                    .orderByChild("username")
-                    .equalTo(username);
-
-            postsReference = query.getRef();
+            postsReference = FirebaseDatabase.getInstance().getReference().child("posts");
+            // TODO TEST THIS?????
+            this.feed = false;
+            this.username1 = username;
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_posts, container, false);
-
+            this.view = view;
             postsListView = view.findViewById(R.id.listViewPosts);
+
+            if (feed){
+                downloadFeed();
+                return view;
+            }
+
+
+//            downloadFeed(new OnPostsDownloadedListener() {
+//                @Override
+//                public void onPostsDownloaded(ArrayList<Post> posts) {
+//
+//                }
+//            });
 
             // Use a callback to handle the completion of downloadPosts()
             downloadPosts(new OnPostsDownloadedListener() {
@@ -55,6 +81,9 @@
                 public void onPostsDownloaded(ArrayList<Post> posts) {
                     // Now you can proceed with the rest of the code
                     PostAdapter adapter = new PostAdapter(requireContext(), posts);
+                    if (posts.size() == 0){
+                        view.findViewById(R.id.no_posts_tv).setVisibility(View.VISIBLE);
+                    }
                     // set adapter for ListView
                     postsListView.setAdapter(adapter);
                 }
@@ -63,25 +92,45 @@
             return view;
         }
 
-
-        public interface OnPostsDownloadedListener {
-            void onPostsDownloaded(ArrayList<Post> posts);
+        public void downloadFeed() {
+            // query za usere
+            downloadUsers(new OnFollowingLoadedListener() {
+                @Override
+                public void onFollowersLoaded(ArrayList<String> users) {
+                    downloadPosts(new OnPostsDownloadedListener() {
+                        @Override
+                        public void onPostsDownloaded(ArrayList<Post> posts) {
+                            // Now you can proceed with the rest of the code
+                            PostAdapter adapter = new PostAdapter(requireContext(), posts);
+                            if (posts.size() == 0){
+                                view.findViewById(R.id.no_posts_tv).setVisibility(View.VISIBLE);
+                            }
+                            // set adapter for ListView
+                            postsListView.setAdapter(adapter);
+                        }
+                    });
+                }
+            });
         }
 
-        public void downloadPosts(OnPostsDownloadedListener listener) {
-            ArrayList<Post> posts = new ArrayList<>();
+        private ArrayList<String> downloadUsers(OnFollowingLoadedListener listener){
+           this.usernames = new ArrayList<>();
+            Query query = FirebaseDatabase.getInstance().getReference()
+                    .child("following11") // TODO IS THIS GOOD
+                    .orderByChild("user1")
+                    .equalTo(username1);
 
-            postsReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                            Post post = postSnapshot.getValue(Post.class);
-                            if (post != null) {
-                                posts.add(post);
-                            }
+                    for (DataSnapshot followingSnapshot : snapshot.getChildren()) {
+                        Following following = followingSnapshot.getValue(Following.class);
+                        if (following.getFollowing()) {
+                            usernames.add(following.getUser2());
+                        }
                     }
                     //infor to the listener that posts have been downloaded
-                    listener.onPostsDownloaded(posts);
+                    listener.onFollowersLoaded(usernames);
                 }
 
                 @Override
@@ -89,34 +138,88 @@
                     Log.e("Firebase", "Failed to read value.", error.toException());
                 }
             });
+            return usernames;       // todo ovi returnovi
+                                    // mi ni ne trebaju?
+        }
+
+        public interface OnPostsDownloadedListener {
+            void onPostsDownloaded(ArrayList<Post> posts);
+        }
+
+        public interface OnFollowingLoadedListener {
+            void onFollowersLoaded(ArrayList<String> users);
+        }
+
+        public void downloadPosts(OnPostsDownloadedListener listener) {
+            ArrayList<Post> posts = new ArrayList<>();
+
+            Query query;
+            if (!feed) {
+                query = FirebaseDatabase.getInstance().getReference()
+                        .child("posts")
+                        .orderByChild("username")
+                        .equalTo(username1);
+
+
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                            Post post = postSnapshot.getValue(Post.class);
+                            if (post != null) {
+                                posts.add(post);
+                            }
+                        }
+                        Collections.sort(posts, new CustomComparator());
+                        //infor to the listener that posts have been downloaded
+                        listener.onPostsDownloaded(posts);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("Firebase", "Failed to read value.", error.toException());
+                    }
+                });
+            } else {
+                loadFeed();
+                postsReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                            Post post = postSnapshot.getValue(Post.class);
+                            if (post != null) {
+                                if (usernames.contains(post.getUsername()) || post.getUsername().equals(username1))
+                                    posts.add(post);
+                            }
+                        }
+                        Collections.sort(posts, new CustomComparator());
+                        //infor to the listener that posts have been downloaded
+                        listener.onPostsDownloaded(posts);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("Firebase", "Failed to read value.", error.toException());
+                    }
+                });
+            }
+
+        }
+
+        private void loadFeed() {
+        }
+
+    }
+    class CustomComparator implements Comparator<Post> {
+        @Override
+        public int compare(Post o1, Post o2) {
+            Long l1 = o1.getDate();
+            Long l2 = o2.getDate();
+            return l2.compareTo(l1);
         }
     }
- /* Some old code
 
-
-    //not working:(
-    private void displayPosts() {
-        FirebaseListOptions<Post> options = new FirebaseListOptions.Builder<Post>()
-                .setLayout(R.layout.post_item)
-                .setQuery(postsReference, Post.class)
-                .build();
-
-        FirebaseListAdapter<Post> adapter = new FirebaseListAdapter<Post>(options) {
-            @Override
-            protected void populateView(@NonNull View v, @NonNull Post model, int position) {
-                TextView usernameTextView = v.findViewById(R.id.post_username);
-                TextView descriptionTextView = v.findViewById(R.id.post_description);
-                TextView dateTextView = v.findViewById(R.id.post_date);
-
-                usernameTextView.setText(model.getUsername());
-                descriptionTextView.setText(model.getDescription());
-                dateTextView.setText(model.getDate());
-            }
-        };
-
-        postsListView.setAdapter(adapter);
-    }
-
+ /*
     //old function showing how adapter works
     private void displayRandom(){
         //displayPosts();
