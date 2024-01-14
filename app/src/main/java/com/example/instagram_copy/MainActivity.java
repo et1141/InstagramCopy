@@ -83,9 +83,9 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     String searchFr = search_editText.getText().toString();
                     if (searchFr.equals("")){
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.mainActivity_fragments_layout, new PostsFragment(sp.getString("username", "default"), true))
-                                .commit();
+//                        getSupportFragmentManager().beginTransaction()
+//                                .replace(R.id.mainActivity_fragments_layout, new PostsFragment(sp.getString("username", "default"), true))
+//                                .commit();
                     } else {
                         searchForUsers(searchFr);
 
