@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
             profile_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    search_editText.setText("");
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.mainActivity_fragments_layout, new UserFragment(sp, sp.getString("username", ""))).commit();
                 }
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
             home_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    search_editText.setText("");
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.mainActivity_fragments_layout, new PostsFragment(sp.getString("username", "default"), true))
                             .commit();
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
             messages_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    search_editText.setText("");
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.mainActivity_fragments_layout, new MessagesFragment())
                             .commit();
@@ -126,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
             addPost_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    search_editText.setText("");
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.mainActivity_fragments_layout, addPostFragment)
                             .commit();
