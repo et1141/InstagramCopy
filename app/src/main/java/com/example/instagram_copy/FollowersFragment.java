@@ -55,9 +55,14 @@ public class FollowersFragment extends Fragment {
 
     DatabaseReference followingReference;
 
+    DatabaseReference usersReference;
+
     private boolean following = false;
 
     private String username1;
+
+    private boolean search;
+    private String searchString;
 
     private String username2;
     public FollowersFragment(String user1, String user2, Boolean following){
@@ -65,6 +70,14 @@ public class FollowersFragment extends Fragment {
         this.username2 = user2;
         this.following = following;
         followingReference = FirebaseDatabase.getInstance().getReference("following11");
+
+
+    }
+
+    public FollowersFragment(String searchString, boolean search){
+        this.searchString = searchString.toLowerCase();
+        this.search = search;
+        usersReference = FirebaseDatabase.getInstance().getReference("users");
 
 
     }
@@ -100,7 +113,15 @@ public class FollowersFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Log.i("eeeeeeeeeeeeeeeeeee", this.username1);
+        //Log.i("eeeeeeeeeeeeeeeeeee", this.username1);
+
+        View v =  inflater.inflate(R.layout.fragment_followers, container, false);
+        this.v = v;
+
+        if (search){
+            searchUsers();
+            return v;
+        }
 
         Query followingQuery;
         if (following)
@@ -124,24 +145,41 @@ public class FollowersFragment extends Fragment {
                                     usernames.add(f.getUser1());
                             }
                     }
-
                 }
                 setupFollowers();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
 
-        View v =  inflater.inflate(R.layout.fragment_followers, container, false);
-        this.v = v;
         //        ArrayList<String> vals = new ArrayList<>();
 //        vals.add("User1");
 //        vals.add("user2");
         //adapter=new ArrayAdapter<String>(getContext(), R.layout.follower_item,vals);
 
         return v;
+    }
+
+    private void searchUsers() {
+        usernames = new ArrayList<String>();
+        usersReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                usernames = new ArrayList<>();
+                    for (DataSnapshot d : snapshot.getChildren()) {
+                        User u = d.getValue(User.class);
+                        if (u.getUsername().toLowerCase().contains(searchString)) {
+                            usernames.add(u.getUsername());
+                            }
+                    }
+
+                setupFollowers();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 
     private void setupFollowers(){

@@ -21,6 +21,8 @@
 
     import java.text.SimpleDateFormat;
     import java.util.ArrayList;
+    import java.util.Collections;
+    import java.util.Comparator;
     import java.util.Date;
     import java.util.Locale;
 
@@ -32,6 +34,7 @@
 
         String username1 = null;
 
+        View view;
         private ArrayList<String> usernames;
 
         public PostsFragment() {
@@ -56,7 +59,7 @@
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_posts, container, false);
-
+            this.view = view;
             postsListView = view.findViewById(R.id.listViewPosts);
 
             if (feed){
@@ -80,6 +83,9 @@
                 public void onPostsDownloaded(ArrayList<Post> posts) {
                     // Now you can proceed with the rest of the code
                     PostAdapter adapter = new PostAdapter(requireContext(), posts);
+                    if (posts.size() == 0){
+                        view.findViewById(R.id.no_posts_tv).setVisibility(View.VISIBLE);
+                    }
                     // set adapter for ListView
                     postsListView.setAdapter(adapter);
                 }
@@ -98,6 +104,9 @@
                         public void onPostsDownloaded(ArrayList<Post> posts) {
                             // Now you can proceed with the rest of the code
                             PostAdapter adapter = new PostAdapter(requireContext(), posts);
+                            if (posts.size() == 0){
+                                view.findViewById(R.id.no_posts_tv).setVisibility(View.VISIBLE);
+                            }
                             // set adapter for ListView
                             postsListView.setAdapter(adapter);
                         }
@@ -163,6 +172,7 @@
                                 posts.add(post);
                             }
                         }
+                        Collections.sort(posts, new CustomComparator());
                         //infor to the listener that posts have been downloaded
                         listener.onPostsDownloaded(posts);
                     }
@@ -185,6 +195,7 @@
                                     posts.add(post);
                             }
                         }
+                        Collections.sort(posts, new CustomComparator());
                         //infor to the listener that posts have been downloaded
                         listener.onPostsDownloaded(posts);
                     }
@@ -202,7 +213,14 @@
         }
 
     }
-
+    class CustomComparator implements Comparator<Post> {
+        @Override
+        public int compare(Post o1, Post o2) {
+            Long l1 = o1.getDate();
+            Long l2 = o2.getDate();
+            return l2.compareTo(l1);
+        }
+    }
 
  /*
     //old function showing how adapter works

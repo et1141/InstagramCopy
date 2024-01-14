@@ -372,7 +372,7 @@ public class UserFragment extends Fragment {
         }
         if (setup){
             TextView tv = view.findViewById(R.id.following);
-            String tmp = sp.getString("following", "") + " following";
+            String tmp = "Following";
             tv.setText(tmp);
 
             tv.setOnClickListener(new View.OnClickListener() {
@@ -391,7 +391,7 @@ public class UserFragment extends Fragment {
             });
 
             TextView tv2 = view.findViewById(R.id.followers);
-            tmp = sp.getString("followers", "") + " followers";
+            tmp = "Followers";
             tv2.setText(tmp);
 
             tv2.setOnClickListener(new View.OnClickListener() {
