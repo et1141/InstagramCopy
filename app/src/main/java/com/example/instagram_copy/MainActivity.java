@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.mainActivity_fragments_layout, new PostsFragment())
+                    .replace(R.id.mainActivity_fragments_layout, new PostsFragment(sp.getString("username", "default"), true))
                     .commit();
 
             search_editText = findViewById(R.id.editTextSearch);
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.mainActivity_fragments_layout, new PostsFragment())
+                            .replace(R.id.mainActivity_fragments_layout, new PostsFragment(sp.getString("username", "default"), true))
                             .commit();
                 }
             });
