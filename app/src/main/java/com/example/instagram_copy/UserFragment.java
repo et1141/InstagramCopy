@@ -101,6 +101,8 @@ public class UserFragment extends Fragment {
 
     }
 
+    // prikaz svojih postova
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -110,7 +112,8 @@ public class UserFragment extends Fragment {
         // remove this
         TextView tview = (TextView) view.findViewById(R.id.username_text_view);
         String txt = this.sp.getString("username", "default");
-        txt = txt + "showing " + this.username;
+        //txt = txt + "showing " + this.username;
+        txt = this.username;
         tview.setText(txt);
 
 //        TextView tview2 = (TextView) view.findViewById(R.id.us2);
@@ -168,6 +171,7 @@ public class UserFragment extends Fragment {
 
         TextView tv3 = view.findViewById(R.id.message);
         if (username1.equals(username2)){
+            showPosts = true;
             Button b = view.findViewById(R.id.followingButton);
             b.setVisibility(View.GONE);
             setupPosts(true);

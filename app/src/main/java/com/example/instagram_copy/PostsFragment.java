@@ -29,11 +29,11 @@
         private ListView postsListView;
 
 
-        String username1;
+        String username1 = null;
 
         public PostsFragment() {
             postsReference = FirebaseDatabase.getInstance().getReference().child("posts");
-            this.username1="";
+            //this.username1="";
         }
 
         public PostsFragment (String username) {
@@ -71,29 +71,56 @@
         public void downloadPosts(OnPostsDownloadedListener listener) {
             ArrayList<Post> posts = new ArrayList<>();
 
-            postsReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+            Query query;
+            if (username1 != null ) {
+                query = FirebaseDatabase.getInstance().getReference()
+                        .child("posts")
+                        .orderByChild("username")
+                        .equalTo(username1);
+
+
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                             Post post = postSnapshot.getValue(Post.class);
                             if (post != null) {
-                                if (username1!="" &&  !username1.equals(post.getUsername())){
-                                posts.add(post);}
-                                else{
-                                    posts.add(post);
-                                }
+                                posts.add(post);
                             }
+                        }
+                        //infor to the listener that posts have been downloaded
+                        listener.onPostsDownloaded(posts);
                     }
-                    //infor to the listener that posts have been downloaded
-                    listener.onPostsDownloaded(posts);
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e("Firebase", "Failed to read value.", error.toException());
-                }
-            });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("Firebase", "Failed to read value.", error.toException());
+                    }
+                });
+            } else {
+                Log.i("Ucitavanje svih", "aaa");
+                postsReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                            Post post = postSnapshot.getValue(Post.class);
+                            if (post != null) {
+                                posts.add(post);
+                            }
+                        }
+                        //infor to the listener that posts have been downloaded
+                        listener.onPostsDownloaded(posts);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("Firebase", "Failed to read value.", error.toException());
+                    }
+                });
+            }
+
         }
+
     }
  /* Some old code
 
